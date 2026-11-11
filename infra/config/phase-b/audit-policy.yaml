@@ -1,0 +1,60 @@
+# Polityka audytu API servera, faza B (K.4 / K.5).
+# Pierwsza pasująca reguła wygrywa, więc kolejność ma znaczenie.
+# Poziomy: None < Metadata (kto, co, kiedy, skąd, wynik) < Request (+ treść żądania) < RequestResponse (+ odpowiedź).
+apiVersion: audit.k8s.io/v1
+kind: Policy
+omitStages:
+  - RequestReceived            # dubluje ResponseComplete
+rules:
+  # --- 1. Szum bez wartości dowodowej ---
+  - level: None
+    nonResourceURLs: ["/healthz*", "/readyz*", "/livez*", "/version", "/metrics", "/openapi*"]
+  - level: None
+    resources:
+      - group: coordination.k8s.io
+        resources: ["leases"]
+      - group: ""
+        resources: ["events"]
+  - level: None
+    userGroups: ["system:nodes"]
+    verbs: ["get", "list", "watch"]
+
+  # --- 2. Sekrety, configmapy, tokeny: TYLKO metadane ---
+  # Na poziomie Request/RequestResponse wartości sekretów trafiłyby do logu,
+  # więc sam audit log stałby się wyciekiem.
+  - level: Metadata
+    resources:
+      - group: ""
+        resources: ["secrets", "configmaps", "serviceaccounts/token"]
+      - group: authentication.k8s.io
+        resources: ["tokenreviews"]
+
+  # --- 3. Interaktywny dostęp do kontenerów i węzłów (scenariusze 1 i 2) ---
+  # Polecenie z `kubectl exec` jest w requestURI (?command=...), więc Metadata wystarcza.
+  - level: Metadata
+    resources:
+      - group: ""
+        resources: ["pods/exec", "pods/attach", "pods/portforward", "nodes/proxy"]
+
+  # --- 4. Rozpoznanie uprawnień (`kubectl auth can-i`): o co pytał atakujący ---
+  - level: Request
+    resources:
+      - group: authorization.k8s.io
+        resources: ["selfsubjectaccessreviews", "selfsubjectrulesreviews"]
+
+  # --- 5. Zmiany workloadów i RBAC: pełna treść żądania i odpowiedzi ---
+  # UWAGA (scenariusz 4): sekret wpisany wprost w env poda trafi tu do logu razem ze specyfikacją poda.
+  - level: RequestResponse
+    verbs: ["create", "update", "patch", "delete", "deletecollection"]
+    resources:
+      - group: ""
+        resources: ["pods", "pods/ephemeralcontainers", "services", "serviceaccounts", "namespaces",
+                    "persistentvolumes", "persistentvolumeclaims"]
+      - group: apps
+      - group: batch
+      - group: rbac.authorization.k8s.io
+      - group: networking.k8s.io
+      - group: admissionregistration.k8s.io
+
+  # --- 6. Cała reszta: metadane ---
+  - level: Metadata

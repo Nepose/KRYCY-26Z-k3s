@@ -1,0 +1,17 @@
+# Faza B: forensic readiness, drop-in dla SERWERA k3s (instaluje infra/node/set-phase.sh b).
+# Ląduje w /etc/rancher/k3s/config.yaml.d/50-forensic-readiness.yaml.
+kube-apiserver-arg:
+  # Audit log API servera; w k3s domyślnie WYŁĄCZONY, więc bez tego nie wiadomo, kto co zrobił przez API
+  - audit-policy-file=/etc/rancher/k3s/audit-policy.yaml
+  - audit-log-path=/var/lib/rancher/k3s/server/logs/audit.log
+  - audit-log-format=json
+  - audit-log-maxage=30        # dni
+  - audit-log-maxbackup=10     # liczba zrotowanych plików
+  - audit-log-maxsize=100      # MB na plik
+  # Eventy Kubernetesa; domyślnie żyją 1 h, potem znikają z API
+  - event-ttl=24h
+kubelet-arg:
+  # Retencja logów kontenerów na węźle (domyślnie 10Mi x 5 plików).
+  # UWAGA: logi i tak znikają razem z podem; trwałe rozwiązanie to wysyłka logów poza węzeł (TODO, K.5).
+  - container-log-max-size=50Mi
+  - container-log-max-files=10

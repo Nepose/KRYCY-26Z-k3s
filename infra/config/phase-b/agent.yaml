@@ -1,0 +1,4 @@
+# Faza B: forensic readiness, drop-in dla AGENTA k3s (instaluje infra/node/set-phase.sh b).
+kubelet-arg:
+  - container-log-max-size=50Mi
+  - container-log-max-files=10
