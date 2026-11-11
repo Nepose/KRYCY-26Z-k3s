@@ -1,0 +1,30 @@
+# Szablon VM-ki Lima dla węzła k3s (macOS 13+, Apple Virtualization.framework).
+# Używany przez infra/up.sh; CPU i RAM nadpisuje skrypt (SERVER_CPUS, AGENT_MEM itd.).
+minimumLimaVersion: 2.0.0
+
+base:
+  - template:_images/ubuntu-24.04
+
+vmType: vz
+
+# Tryb "plain": bez montowania katalogu domowego Maca, bez port-forwardingu, bez containerd Limy.
+# To celowe: scenariusz 1 (ucieczka z kontenera) daje roota na tej VM-ce, więc
+# nie może ona widzieć ~/.ssh ani innych plików hosta.
+plain: true
+
+cpus: 2
+memory: 4GiB
+disk: 30GiB
+
+# Dwa interfejsy w każdej VM-ce:
+#   eth0  Lima user-v2 (192.168.104.0/24), zastępuje domyślny usernet: internet + ruch między
+#         węzłami (k3s, flannel). Każda VM-ka ma własny adres. NODE_IFACE
+#   lima1 vzNAT (192.168.64.0/24): wyłącznie dostęp z Maca do API (kubectl). API_IFACE
+#         (nazwę lima0 Lima rezerwuje dla pierwszej sieci, nawet gdy user-v2 staje się eth0)
+# Dlaczego nie samo vzNAT: na części Maców (firewall, VPN) NAT vmnet przepuszcza tylko ruch
+# host↔VM, a blokuje VM↔VM i VM→internet. user-v2 działa w przestrzeni użytkownika, więc tego nie dotyczy.
+networks:
+  - lima: user-v2
+  - vzNAT: true
+    interface: lima1
+    metric: 300          # trasa domyślna zostaje na eth0 (metryka 200)
