@@ -1,0 +1,15 @@
+name: lint
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - name: shellcheck
+        run: shellcheck -x infra/*.sh infra/node/*.sh detection/*/*.sh triage/*.sh tests/*.sh tools/*.sh
+      - name: yamllint
+        run: pipx run yamllint -d relaxed infra/config detection/falco .github

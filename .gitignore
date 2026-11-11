@@ -1,0 +1,8 @@
+# Lokalny kubeconfig labu (zawiera certyfikat admina klastra)
+.kube/
+
+# Zebrane dowody: duże i wrażliwe (tokeny, sekrety, env). Nie commitujemy.
+evidence/*
+!evidence/README.md
+
+.DS_Store
