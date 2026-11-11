@@ -1,0 +1,17 @@
+# Reguły Falco projektu KRYCY26Z-12 (K.7: mapowanie na MITRE ATT&CK for Containers).
+# Ładowane po domyślnych regułach Falco, więc można używać ich makr (open_read, container…).
+# Konwencja: nazwa zaczyna się od "KRYCY", tagi zawierają ID techniki ATT&CK.
+
+- rule: KRYCY Odczyt tokenu ServiceAccount przez narzędzie powłoki
+  desc: >
+    Proces typowy dla ręcznej pracy atakującego (cat, curl, base64…) czyta token
+    service account zamontowany w podzie. Scenariusz 2 (nadużycie service account).
+  condition: >
+    open_read and container
+    and fd.name endswith "serviceaccount/token"
+    and proc.name in (cat, head, tail, less, more, base64, curl, wget, sh, bash, ash, dash)
+  output: >
+    Odczyt tokenu SA (proc=%proc.cmdline plik=%fd.name kontener=%container.name
+    pod=%k8s.pod.name ns=%k8s.ns.name obraz=%container.image.repository user=%user.name)
+  priority: WARNING
+  tags: [krycy, container, k8s, mitre_credential_access, T1528]

@@ -1,0 +1,19 @@
+# Wartości chartu falcosecurity/falco (wersja: FALCO_CHART_VERSION w infra/versions.env).
+# Reguły projektu są dokładane z rules/krycy-rules.yaml przez install.sh (customRules).
+
+driver:
+  # CO-RE eBPF: nie wymaga kompilowania modułu, potrzebuje BTF w jądrze (Ubuntu 24.04 ma).
+  # Nie zadziała w kontenerze LXC ani na OpenVZ (brak dostępu do bpf()), patrz docs/decisions.md.
+  kind: modern_ebpf
+
+# Bez TTY Falco buforuje wyjście i zdarzenia pojawiają się w `kubectl logs` z opóźnieniem
+tty: true
+
+falco:
+  # JSON zamiast tekstu: łatwiej parsować, korelować z audit logiem i liczyć statystyki
+  json_output: true
+  json_include_output_property: true
+  json_include_tags_property: true
+
+# Integracja z containerd w k3s (/run/k3s/containerd/containerd.sock) jest w domyślnych
+# wartościach chartu (collectors.containerEngine.engines.cri), więc nie trzeba jej ustawiać.
