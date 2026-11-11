@@ -1,0 +1,83 @@
+# polecenie: sh -c cd evidence/20261111T202057Z_default_triage-demo && echo '== pliki paczki' && find . -type f | sort && echo && echo '== weryfikacja sum' && shasum -a 256 -c SHA256SUMS | sed 's/^/  /' && echo && echo '== zapisywalna warstwa FS kontenera (upperdir)' && tar -tf 30-node/container-*-upperdir.tar | grep -v '/$' && echo && echo '== procesy w przestrzeni PID kontenera' && cat 30-node/container-*-processes.tsv && echo && echo '== audit log w paczce' && gzip -t 50-telemetry/audit.log.gz && echo "gzip OK, $(gzip -dc 50-telemetry/audit.log.gz | wc -l | tr -d ' ') zdarzeń" && echo && echo '== suma paczki' && cat ../20261111T202057Z_default_triage-demo.tar.gz.sha256
+# start:     2026-11-11T20:21:26Z (UTC)
+# host:      Darwin arm64, 26.6.2
+# commit:    25a152a + niezacommitowane zmiany
+
+== pliki paczki
+./00-cluster-version.txt
+./00-metadata.txt
+./10-logs/triage-demo.log
+./10-logs/triage-demo.previous.log
+./20-pod/describe.txt
+./20-pod/pod.yaml
+./30-node/container-41bc5a8d342b9-environ.txt
+./30-node/container-41bc5a8d342b9-inspect.json
+./30-node/container-41bc5a8d342b9-processes.tsv
+./30-node/container-41bc5a8d342b9-sockets.txt
+./30-node/container-41bc5a8d342b9-upperdir.tar
+./30-node/crictl-pods.txt
+./30-node/crictl-ps-a.txt
+./30-node/date-utc.txt
+./30-node/journal-k3s.txt
+./30-node/uname.txt
+./30-node/var-log-pods.tar
+./40-cluster/clusterrolebindings.yaml
+./40-cluster/events-all.yaml
+./40-cluster/events-namespace.txt
+./40-cluster/networkpolicies.yaml
+./40-cluster/pods-namespace.txt
+./40-cluster/rolebindings.yaml
+./40-cluster/serviceaccount-default.yaml
+./50-telemetry/audit.log.gz
+./50-telemetry/falco-k3s-agent-1.jsonl
+./SHA256SUMS
+./collection.log
+./collection.log.stderr
+
+== weryfikacja sum
+  ./00-cluster-version.txt: OK
+  ./00-metadata.txt: OK
+  ./10-logs/triage-demo.log: OK
+  ./10-logs/triage-demo.previous.log: OK
+  ./20-pod/describe.txt: OK
+  ./20-pod/pod.yaml: OK
+  ./30-node/container-41bc5a8d342b9-environ.txt: OK
+  ./30-node/container-41bc5a8d342b9-inspect.json: OK
+  ./30-node/container-41bc5a8d342b9-processes.tsv: OK
+  ./30-node/container-41bc5a8d342b9-sockets.txt: OK
+  ./30-node/container-41bc5a8d342b9-upperdir.tar: OK
+  ./30-node/crictl-pods.txt: OK
+  ./30-node/crictl-ps-a.txt: OK
+  ./30-node/date-utc.txt: OK
+  ./30-node/journal-k3s.txt: OK
+  ./30-node/uname.txt: OK
+  ./30-node/var-log-pods.tar: OK
+  ./40-cluster/clusterrolebindings.yaml: OK
+  ./40-cluster/events-all.yaml: OK
+  ./40-cluster/events-namespace.txt: OK
+  ./40-cluster/networkpolicies.yaml: OK
+  ./40-cluster/pods-namespace.txt: OK
+  ./40-cluster/rolebindings.yaml: OK
+  ./40-cluster/serviceaccount-default.yaml: OK
+  ./50-telemetry/audit.log.gz: OK
+  ./50-telemetry/falco-k3s-agent-1.jsonl: OK
+  ./collection.log: OK
+  ./collection.log.stderr: OK
+
+== zapisywalna warstwa FS kontenera (upperdir)
+./etc/hosts
+./etc/hostname
+./etc/resolv.conf
+./tmp/dropped.sh
+
+== procesy w przestrzeni PID kontenera
+PID	PPID	UID	EXE	CMDLINE
+3963	3912	0	/bin/sleep	sleep 3600 
+
+== audit log w paczce
+gzip OK, 972 zdarzeń
+
+== suma paczki
+4f0cc46632c357203fb895d6cccbe815f451052ad4ed6e4658a327891aa2ee04  20261111T202057Z_default_triage-demo.tar.gz
+
+# koniec:    2026-11-11T20:21:26Z (UTC), czas 0 s, kod wyjścia 0

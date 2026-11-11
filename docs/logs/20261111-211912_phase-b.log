@@ -1,0 +1,15 @@
+# polecenie: /Library/Developer/CommandLineTools/usr/bin/make --no-print-directory phase-b NS= POD=
+# start:     2026-11-11T20:19:12Z (UTC)
+# host:      Darwin arm64, 26.6.2
+# commit:    25a152a + niezacommitowane zmiany
+
+infra/phase.sh b
+lima-k3s-server (server): faza B
+lima-k3s-agent-1 (agent): faza B
+[21:19:22] Czekam na API i 2 węzeł(y) w stanie Ready…
+NAME          STATUS   ROLES           AGE   VERSION        INTERNAL-IP     EXTERNAL-IP   OS-IMAGE             KERNEL-VERSION              CONTAINER-RUNTIME
+k3s-agent-1   Ready    <none>          34s   v1.37.2+k3s1   192.168.104.3   <none>        Ubuntu 24.04.5 LTS   6.8.0-142-generic (arm64)   containerd://2.3.7-k3s1
+k3s-server    Ready    control-plane   45s   v1.37.2+k3s1   192.168.104.1   <none>        Ubuntu 24.04.5 LTS   6.8.0-142-generic (arm64)   containerd://2.3.7-k3s1
+[21:19:23] Klaster w fazie B.
+
+# koniec:    2026-11-11T20:19:23Z (UTC), czas 11 s, kod wyjścia 0

@@ -1,0 +1,16 @@
+# polecenie: /Library/Developer/CommandLineTools/usr/bin/make --no-print-directory test NS= POD=
+# start:     2026-11-11T20:20:13Z (UTC)
+# host:      Darwin arm64, 26.6.2
+# commit:    25a152a + niezacommitowane zmiany
+
+tests/smoke.sh
+[1] Węzły
+  OK   2/2 węzłów Ready
+[2] Faza i audit log
+  OK   serwer w fazie B
+  OK   audit log rejestruje selfsubjectrulesreviews (znacznik krycy-smoke-1794428414)
+[3] Falco
+  OK   reguła 'KRYCY Odczyt tokenu ServiceAccount' wykryła pod krycy-smoke-1794428414
+Wszystkie testy OK
+
+# koniec:    2026-11-11T20:20:20Z (UTC), czas 6 s, kod wyjścia 0

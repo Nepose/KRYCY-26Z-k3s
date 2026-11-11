@@ -1,0 +1,32 @@
+# polecenie: /Library/Developer/CommandLineTools/usr/bin/make --no-print-directory falco NS= POD=
+# start:     2026-11-11T20:19:23Z (UTC)
+# host:      Darwin arm64, 26.6.2
+# commit:    25a152a + niezacommitowane zmiany
+
+detection/falco/install.sh
+[21:19:23] Falco: chart 9.2.2, sterownik modern_ebpf
+Release "falco" does not exist. Installing it now.
+NAME: falco
+LAST DEPLOYED: Wed Nov 11 21:19:24 2026
+NAMESPACE: falco
+STATUS: deployed
+REVISION: 1
+DESCRIPTION: Install complete
+TEST SUITE: None
+NOTES:
+Falco agents are spinning up on each node in your cluster. After a few
+seconds, they are going to start monitoring your containers looking for
+security issues.
+
+TIP:
+You can easily forward Falco events to Slack, Kafka, AWS Lambda and more with falcosidekick.
+Full list of outputs: https://github.com/falcosecurity/charts/tree/master/charts/falcosidekick.
+You can enable its deployment with `--set falcosidekick.enabled=true` or in your values.yaml.
+See: https://github.com/falcosecurity/charts/blob/master/charts/falcosidekick/values.yaml for configuration values.
+daemon set "falco" successfully rolled out
+NAME          READY   STATUS    RESTARTS   AGE   IP          NODE          NOMINATED NODE   READINESS GATES
+falco-45554   2/2     Running   0          49s   10.42.0.9   k3s-server    <none>           <none>
+falco-gpbdv   2/2     Running   0          49s   10.42.1.4   k3s-agent-1   <none>           <none>
+[21:20:13] Zdarzenia:  kubectl -n falco logs -l app.kubernetes.io/name=falco -c falco -f
+
+# koniec:    2026-11-11T20:20:13Z (UTC), czas 50 s, kod wyjścia 0

@@ -1,0 +1,13 @@
+# polecenie: /Library/Developer/CommandLineTools/usr/bin/make --no-print-directory triage NS=default POD=triage-demo
+# start:     2026-11-11T20:20:57Z (UTC)
+# host:      Darwin arm64, 26.6.2
+# commit:    25a152a + niezacommitowane zmiany
+
+triage/triage.sh -n "default" -p "triage-demo"
+[21:20:57] Triage default/triage-demo -> evidence/20261111T202057Z_default_triage-demo
+UWAGA: krok '10-logs/triage-demo.previous.log' zakończony kodem 1
+[21:20:58] Zbieram dowody z węzła k3s-agent-1
+[21:20:59] Gotowe: evidence/20261111T202057Z_default_triage-demo.tar.gz
+4f0cc46632c357203fb895d6cccbe815f451052ad4ed6e4658a327891aa2ee04  20261111T202057Z_default_triage-demo.tar.gz
+
+# koniec:    2026-11-11T20:20:59Z (UTC), czas 2 s, kod wyjścia 0

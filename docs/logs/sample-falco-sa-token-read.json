@@ -1,0 +1,27 @@
+{
+  "hostname": "k3s-agent-1",
+  "output": "20:20:18.782727983: Warning Odczyt tokenu SA (proc=cat /var/run/secrets/kubernetes.io/serviceaccount/token plik=/var/run/secrets/kubernetes.io/serviceaccount/token kontener=krycy-smoke-1794428414 pod=krycy-smoke-1794428414 ns=default obraz=docker.io/library/busybox user=root) container_id=19ada921583c container_name=krycy-smoke-1794428414 container_image_repository=docker.io/library/busybox container_image_tag=1.37 k8s_pod_name=krycy-smoke-1794428414 k8s_ns_name=default",
+  "output_fields": {
+    "container.id": "19ada921583c",
+    "container.image.repository": "docker.io/library/busybox",
+    "container.image.tag": "1.37",
+    "container.name": "krycy-smoke-1794428414",
+    "evt.time": 1794428418782727983,
+    "fd.name": "/var/run/secrets/kubernetes.io/serviceaccount/token",
+    "k8s.ns.name": "default",
+    "k8s.pod.name": "krycy-smoke-1794428414",
+    "proc.cmdline": "cat /var/run/secrets/kubernetes.io/serviceaccount/token",
+    "user.name": "root"
+  },
+  "priority": "Warning",
+  "rule": "KRYCY Odczyt tokenu ServiceAccount przez narzędzie powłoki",
+  "source": "syscall",
+  "tags": [
+    "T1528",
+    "container",
+    "k8s",
+    "krycy",
+    "mitre_credential_access"
+  ],
+  "time": "2026-11-11T20:20:18.782727983Z"
+}

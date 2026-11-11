@@ -1,0 +1,86 @@
+# polecenie: /Library/Developer/CommandLineTools/usr/bin/make --no-print-directory up NS= POD=
+# start:     2026-11-11T20:15:36Z (UTC)
+# host:      Darwin arm64, 26.6.2
+# commit:    25a152a + niezacommitowane zmiany
+
+infra/up.sh
+[21:15:36] Tworzę VM k3s-server (2 CPU, 4 GiB RAM)
+time="2026-11-11T21:15:36+01:00" level=info msg="Terminal is not available, proceeding without opening an editor"
+time="2026-11-11T21:15:37+01:00" level=info msg="Starting the instance `k3s-server` with internal VM driver `vz`"
+time="2026-11-11T21:15:37+01:00" level=info msg="Attempting to download the image" arch=aarch64 digest="sha256:1d6bffe64b848468ac97f821d369a4846d983de1800ccf6b5ec8853e85cefc55" location="https://cloud-images.ubuntu.com/releases/noble/release-20260926/ubuntu-24.04-server-cloudimg-arm64.img"
+time="2026-11-11T21:15:37+01:00" level=info msg="Using cache `/Users/nepose/Library/Caches/lima/download/by-url-sha256/8b0792f7ce936da399a685f0df1bec82cd529a1163d97430fb5c8025bd9bb464/imgconv/raw`"
+time="2026-11-11T21:15:37+01:00" level=info msg="Resize instance k3s-server's disk from 3.5GiB to 30GiB"
+time="2026-11-11T21:15:37+01:00" level=info msg="[hostagent] hostagent socket created at /Users/nepose/.lima/k3s-server/ha.sock"
+time="2026-11-11T21:15:37+01:00" level=info msg="[hostagent] Starting VZ (hint: to watch the boot progress, see `/Users/nepose/.lima/k3s-server/serial*.log`)"
+time="2026-11-11T21:15:37+01:00" level=info msg="[hostagent] [VZ] - vm state change: running"
+time="2026-11-11T21:15:45+01:00" level=info msg="[hostagent] SSH server does not seem to be running on vsock port, using usernet forwarder"
+time="2026-11-11T21:15:45+01:00" level=info msg="SSH Local Port: 53402"
+time="2026-11-11T21:15:45+01:00" level=info msg="[hostagent] Running in plain mode. Mounts, dynamic port forwarding, containerd, etc. will be ignored. Guest agent will not be running."
+time="2026-11-11T21:15:45+01:00" level=info msg="[hostagent] Waiting for the essential requirement 1 of 2: `ssh`"
+time="2026-11-11T21:15:46+01:00" level=info msg="[hostagent] The essential requirement 1 of 2 is satisfied"
+time="2026-11-11T21:15:46+01:00" level=info msg="[hostagent] Waiting for the essential requirement 2 of 2: `Explicitly start ssh ControlMaster`"
+time="2026-11-11T21:15:46+01:00" level=info msg="[hostagent] The essential requirement 2 of 2 is satisfied"
+time="2026-11-11T21:15:46+01:00" level=info msg="[hostagent] Waiting for the final requirement 1 of 1: `boot scripts must have finished`"
+time="2026-11-11T21:17:05+01:00" level=info msg="READY. Run `ssh -F `/Users/nepose/.lima/k3s-server/ssh.config` lima-k3s-server` to open the shell."
+[21:17:05] Tworzę VM k3s-agent-1 (2 CPU, 4 GiB RAM)
+time="2026-11-11T21:17:05+01:00" level=info msg="Terminal is not available, proceeding without opening an editor"
+time="2026-11-11T21:17:05+01:00" level=info msg="Starting the instance `k3s-agent-1` with internal VM driver `vz`"
+time="2026-11-11T21:17:05+01:00" level=info msg="Attempting to download the image" arch=aarch64 digest="sha256:1d6bffe64b848468ac97f821d369a4846d983de1800ccf6b5ec8853e85cefc55" location="https://cloud-images.ubuntu.com/releases/noble/release-20260926/ubuntu-24.04-server-cloudimg-arm64.img"
+time="2026-11-11T21:17:05+01:00" level=info msg="Using cache `/Users/nepose/Library/Caches/lima/download/by-url-sha256/8b0792f7ce936da399a685f0df1bec82cd529a1163d97430fb5c8025bd9bb464/imgconv/raw`"
+time="2026-11-11T21:17:05+01:00" level=info msg="Resize instance k3s-agent-1's disk from 3.5GiB to 30GiB"
+time="2026-11-11T21:17:05+01:00" level=info msg="[hostagent] hostagent socket created at /Users/nepose/.lima/k3s-agent-1/ha.sock"
+time="2026-11-11T21:17:05+01:00" level=info msg="[hostagent] Starting VZ (hint: to watch the boot progress, see `/Users/nepose/.lima/k3s-agent-1/serial*.log`)"
+time="2026-11-11T21:17:05+01:00" level=info msg="[hostagent] [VZ] - vm state change: running"
+time="2026-11-11T21:17:12+01:00" level=info msg="[hostagent] SSH server does not seem to be running on vsock port, using usernet forwarder"
+time="2026-11-11T21:17:12+01:00" level=info msg="SSH Local Port: 53443"
+time="2026-11-11T21:17:12+01:00" level=info msg="[hostagent] Running in plain mode. Mounts, dynamic port forwarding, containerd, etc. will be ignored. Guest agent will not be running."
+time="2026-11-11T21:17:12+01:00" level=info msg="[hostagent] Waiting for the essential requirement 1 of 2: `ssh`"
+time="2026-11-11T21:17:13+01:00" level=info msg="[hostagent] The essential requirement 1 of 2 is satisfied"
+time="2026-11-11T21:17:13+01:00" level=info msg="[hostagent] Waiting for the essential requirement 2 of 2: `Explicitly start ssh ControlMaster`"
+time="2026-11-11T21:17:13+01:00" level=info msg="[hostagent] The essential requirement 2 of 2 is satisfied"
+time="2026-11-11T21:17:13+01:00" level=info msg="[hostagent] Waiting for the final requirement 1 of 1: `boot scripts must have finished`"
+time="2026-11-11T21:17:55+01:00" level=info msg="READY. Run `ssh -F `/Users/nepose/.lima/k3s-agent-1/ssh.config` lima-k3s-agent-1` to open the shell."
+[21:17:55] Serwer k3s-server: instaluję k3s v1.37.2+k3s1
+[INFO]  Using v1.37.2+k3s1 as release
+[INFO]  Downloading hash https://github.com/k3s-io/k3s/releases/download/v1.37.2%2Bk3s1/sha256sum-arm64.txt
+[INFO]  Downloading binary https://github.com/k3s-io/k3s/releases/download/v1.37.2%2Bk3s1/k3s-arm64
+[INFO]  Verifying binary download
+[INFO]  Installing k3s to /usr/local/bin/k3s
+[INFO]  Skipping installation of SELinux RPM
+[INFO]  Creating /usr/local/bin/kubectl symlink to k3s
+[INFO]  Creating /usr/local/bin/crictl symlink to k3s
+[INFO]  Creating /usr/local/bin/ctr symlink to k3s
+[INFO]  Creating killall script /usr/local/bin/k3s-killall.sh
+[INFO]  Creating uninstall script /usr/local/bin/k3s-uninstall.sh
+[INFO]  env: Creating environment file /etc/systemd/system/k3s.service.env
+[INFO]  systemd: Creating service file /etc/systemd/system/k3s.service
+[INFO]  systemd: Enabling k3s unit
+Created symlink /etc/systemd/system/multi-user.target.wants/k3s.service → /etc/systemd/system/k3s.service.
+[INFO]  systemd: Starting k3s
+lima-k3s-server: serwer k3s v1.37.2+k3s1 gotowy
+[21:18:38] Agent k3s-agent-1: dołączam do https://192.168.104.1:6443
+[INFO]  Using v1.37.2+k3s1 as release
+[INFO]  Downloading hash https://github.com/k3s-io/k3s/releases/download/v1.37.2%2Bk3s1/sha256sum-arm64.txt
+[INFO]  Downloading binary https://github.com/k3s-io/k3s/releases/download/v1.37.2%2Bk3s1/k3s-arm64
+[INFO]  Verifying binary download
+[INFO]  Installing k3s to /usr/local/bin/k3s
+[INFO]  Skipping installation of SELinux RPM
+[INFO]  Creating /usr/local/bin/kubectl symlink to k3s
+[INFO]  Creating /usr/local/bin/crictl symlink to k3s
+[INFO]  Creating /usr/local/bin/ctr symlink to k3s
+[INFO]  Creating killall script /usr/local/bin/k3s-killall.sh
+[INFO]  Creating uninstall script /usr/local/bin/k3s-agent-uninstall.sh
+[INFO]  env: Creating environment file /etc/systemd/system/k3s-agent.service.env
+[INFO]  systemd: Creating service file /etc/systemd/system/k3s-agent.service
+[INFO]  systemd: Enabling k3s-agent unit
+Created symlink /etc/systemd/system/multi-user.target.wants/k3s-agent.service → /etc/systemd/system/k3s-agent.service.
+[INFO]  systemd: Starting k3s-agent
+lima-k3s-agent-1: agent k3s v1.37.2+k3s1 dołączony do https://192.168.104.1:6443
+[21:18:51] Zapisuję kubeconfig do .kube/config
+[21:18:51] Czekam na API i 2 węzeł(y) w stanie Ready…
+NAME          STATUS   ROLES           AGE   VERSION        INTERNAL-IP     EXTERNAL-IP   OS-IMAGE             KERNEL-VERSION              CONTAINER-RUNTIME
+k3s-agent-1   Ready    <none>          2s    v1.37.2+k3s1   192.168.104.3   <none>        Ubuntu 24.04.5 LTS   6.8.0-142-generic (arm64)   containerd://2.3.7-k3s1
+k3s-server    Ready    control-plane   13s   v1.37.2+k3s1   192.168.104.1   <none>        Ubuntu 24.04.5 LTS   6.8.0-142-generic (arm64)   containerd://2.3.7-k3s1
+[21:18:51] Gotowe. Faza A (domyślny k3s). Dalej:  export KUBECONFIG=$PWD/.kube/config
+
+# koniec:    2026-11-11T20:18:51Z (UTC), czas 195 s, kod wyjścia 0
