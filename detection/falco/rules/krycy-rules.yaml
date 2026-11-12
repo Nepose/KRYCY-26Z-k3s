@@ -2,6 +2,21 @@
 # Ładowane po domyślnych regułach Falco, więc można używać ich makr (open_read, container…).
 # Konwencja: nazwa zaczyna się od "KRYCY", tagi zawierają ID techniki ATT&CK.
 
+- rule: KRYCY Ucieczka z kontenera przez nsenter
+  desc: >
+    Proces nsenter w kontenerze przełącza się w przestrzenie nazw procesu 1 (hosta).
+    To klasyczna ucieczka z uprzywilejowanego poda na węzeł. Scenariusz 1 (privileged pod).
+  condition: >
+    spawned_process and container
+    and proc.name = nsenter
+    and (proc.cmdline contains "--target 1" or proc.cmdline contains "-t 1"
+         or proc.cmdline contains "--target=1")
+  output: >
+    Ucieczka nsenter na hosta (proc=%proc.cmdline kontener=%container.name
+    pod=%k8s.pod.name ns=%k8s.ns.name obraz=%container.image.repository user=%user.name)
+  priority: CRITICAL
+  tags: [krycy, container, k8s, mitre_privilege_escalation, T1611]
+
 - rule: KRYCY Odczyt tokenu ServiceAccount przez narzędzie powłoki
   desc: >
     Proces typowy dla ręcznej pracy atakującego (cat, curl, base64…) czyta token
