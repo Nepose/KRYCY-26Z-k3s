@@ -15,6 +15,8 @@ if [ "$TRANSPORT" = lima ]; then
   NODE_IFACE=${NODE_IFACE-eth0}         # interfejs sieci między węzłami (Lima user-v2)
   API_IFACE=${API_IFACE-lima1}          # interfejs, przez który host łączy się z API (vzNAT)
 else
+  # ssh / libvirt: pojedyncza karta, adres z trasy domyślnej (node-ip.sh bez interfejsu).
+  # Przy libvirt NAT libvirta jest widoczny także z hosta, więc API_IFACE = NODE_IFACE.
   NODE_IFACE=${NODE_IFACE-}             # "" = adres z trasy domyślnej
   API_IFACE=${API_IFACE-$NODE_IFACE}
 fi
@@ -22,6 +24,13 @@ SERVER_CPUS=${SERVER_CPUS:-2}; SERVER_MEM=${SERVER_MEM:-4}   # GiB
 AGENT_CPUS=${AGENT_CPUS:-2};   AGENT_MEM=${AGENT_MEM:-4}     # GiB
 KUBECONFIG_PATH=${KUBECONFIG_PATH:-$REPO_ROOT/.kube/config}
 REMOTE_DIR=/opt/krycy                   # gdzie na węźle lądują infra/node i infra/config
+
+# Prowizjoner VM-ek na Linuksie (virsh + cloud-init). Sourcujemy tylko dla TRANSPORT=libvirt,
+# żeby ścieżka macOS (lima) nie zależała od obecności tego pliku ani narzędzi libvirta.
+if [ "$TRANSPORT" = libvirt ]; then
+  # shellcheck source=infra/libvirt/provision.sh
+  source "$REPO_ROOT/infra/libvirt/provision.sh"
+fi
 
 log()  { printf '\033[1;34m[%s]\033[0m %s\n' "$(date +%H:%M:%S)" "$*" >&2; }
 warn() { printf '\033[1;33mUWAGA:\033[0m %s\n' "$*" >&2; }
@@ -37,7 +46,9 @@ node_exec() {
   case $TRANSPORT in
     lima) limactl shell --workdir / "$node" sudo "$@" ;;
     ssh)  ssh -o BatchMode=yes "$node" "sudo $(printf '%q ' "$@")" ;;
-    *)    die "nieznany TRANSPORT=$TRANSPORT (dozwolone: lima, ssh)" ;;
+    # shellcheck disable=SC2046  # lab_ssh_opts celowo się dzieli na słowa
+    libvirt) ssh $(lab_ssh_opts) "$LAB_USER@$(libvirt_ip "$node")" "sudo $(printf '%q ' "$@")" ;;
+    *)    die "nieznany TRANSPORT=$TRANSPORT (dozwolone: lima, ssh, libvirt)" ;;
   esac
 }
 

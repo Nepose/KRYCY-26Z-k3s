@@ -5,4 +5,7 @@
 evidence/*
 !evidence/README.md
 
+# Port na Linux (libvirt): klucz SSH labu, known_hosts i pobrany obraz bazowy.
+.lab/
+
 .DS_Store

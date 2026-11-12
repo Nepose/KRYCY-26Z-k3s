@@ -34,3 +34,28 @@ są blokowane** (prawdopodobnie firewall macOS albo VPN):
 oraz k3s i flannela, `lima1` (vzNAT) wyłącznie dla `kubectl` z Maca. Certyfikat API dostaje adres
 z `lima1` (`tls-san`). Sprawdzone: agent (192.168.104.3) pinguje serwer (192.168.104.1), a `curl` do GitHuba z VM-ki zwraca HTTP 301.
 
+
+## D-003: port na Linux przez libvirt/KVM (TRANSPORT=libvirt) (2026-11-12)
+
+**Kontekst.** Lab powstał na macOS (Lima/Apple vz). Część zespołu pracuje na Linuksie, a VM-ki
+Lima na Macu nie są dla nich dostępne. Potrzebna była natywna ścieżka linuksowa, która nie dubluje
+skryptów węzła.
+
+**Ustalenia.** Mac-specyficzna jest wyłącznie warstwa hosta (stacja analityka): `limactl`, szablon
+[node.yaml](../infra/lima/node.yaml) i macowy hack sieciowy z D-002. Skrypty węzła
+([infra/node/](../infra/node/)) są czysto linuksowe (ip, systemd, k3s) i działają bez zmian.
+Istniejąca ścieżka `TRANSPORT=ssh` już dowodziła tej niezależności.
+
+**Decyzja.** Dodany `TRANSPORT=libvirt`: VM-ki Ubuntu 24.04 stawiane przez `virt-install` + cloud-init
+([provision.sh](../infra/libvirt/provision.sh), [user-data.yaml.tpl](../infra/libvirt/user-data.yaml.tpl)),
+dostęp do węzłów po SSH jako `krycy` dedykowanym kluczem (`.lab/`, poza gitem). W odróżnieniu od D-002
+**nie ma drugiej karty**: NAT libvirta jest widoczny także z hosta, więc jeden interfejs obsługuje
+host↔VM, VM↔VM i VM→internet, a `NODE_IFACE`/`API_IFACE` są puste (adres z trasy domyślnej).
+Ścieżka Limy pozostaje nietknięta (provisioner sourcowany tylko dla `TRANSPORT=libvirt`).
+
+**Status.** Kod napisany i sprawdzony składniowo (`bash -n`, `make lint`). Pełny przebieg
+`make up && make test` na realnym hoście Linux z libvirt — do wykonania; wynik i ewentualne
+poprawki (os-variant, opcje `virt-install`, czas pobierania obrazu) dopisać tutaj.
+
+**Wniosek do raportu.** Rozdział „host vs węzeł” w architekturze labu opłacił się: dodanie podłoża
+to jeden plik provisionera i trzy gałęzie `case`, bez ruszania detekcji, scenariuszy ani triage.

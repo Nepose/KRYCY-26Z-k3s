@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # K.1: stawia odtwarzalny klaster k3s w fazie A (domyślna konfiguracja).
 #   TRANSPORT=lima (domyślnie): tworzy VM-ki Lima na Macu.
+#   TRANSPORT=libvirt: tworzy VM-ki KVM na Linuksie (virsh + cloud-init), np.
+#     TRANSPORT=libvirt infra/up.sh
 #   TRANSPORT=ssh: instaluje k3s na istniejących hostach, np.
 #     TRANSPORT=ssh SERVER=lab1 AGENTS="lab2" NODE_IFACE=eth0 infra/up.sh
 # Skrypt jest idempotentny: ponowne uruchomienie dokańcza lub odświeża instalację.
@@ -12,6 +14,10 @@ if [ "$TRANSPORT" = lima ]; then
   need limactl
   lima_ensure_vm "$SERVER" "$SERVER_CPUS" "$SERVER_MEM"
   for a in $AGENTS; do lima_ensure_vm "$a" "$AGENT_CPUS" "$AGENT_MEM"; done
+elif [ "$TRANSPORT" = libvirt ]; then
+  libvirt_preflight
+  libvirt_ensure_vm "$SERVER" "$SERVER_CPUS" "$SERVER_MEM"
+  for a in $AGENTS; do libvirt_ensure_vm "$a" "$AGENT_CPUS" "$AGENT_MEM"; done
 fi
 
 log "Serwer $SERVER: instaluję k3s $K3S_VERSION"

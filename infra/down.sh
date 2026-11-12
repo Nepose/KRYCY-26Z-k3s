@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Usuwa klaster labu: VM-ki Lima (TRANSPORT=lima) albo k3s z hostów (TRANSPORT=ssh).
+# Usuwa klaster labu: VM-ki Lima (lima), VM-ki KVM (libvirt) albo k3s z hostów (ssh).
 # Użycie: infra/down.sh [-y]
 # shellcheck source=infra/lib.sh
 source "$(dirname "$0")/lib.sh"
@@ -18,6 +18,9 @@ case $TRANSPORT in
     need limactl
     # shellcheck disable=SC2086
     limactl delete --force $nodes ;;
+  libvirt)
+    need virsh
+    libvirt_delete_all ;;
   ssh)
     for n in $nodes; do
       log "Odinstalowuję k3s z $n"

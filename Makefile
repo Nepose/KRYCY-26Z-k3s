@@ -44,7 +44,7 @@ test: ## Test end-to-end labu (węzły, audit log, Falco)
 	tests/smoke.sh
 
 lint: ## shellcheck wszystkich skryptów
-	shellcheck -x infra/*.sh infra/node/*.sh detection/*/*.sh triage/*.sh tests/*.sh tools/*.sh
+	shellcheck -x infra/*.sh infra/node/*.sh infra/libvirt/*.sh detection/*/*.sh triage/*.sh tests/*.sh tools/*.sh
 
 rec: ## Nagraj przebieg celu do docs/logs/ (dowód do raportu): make rec T=test
 	@test -n "$(T)" || { echo "Użycie: make rec T=<cel>, np. make rec T=up"; exit 2; }

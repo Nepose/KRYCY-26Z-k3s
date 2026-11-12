@@ -42,9 +42,17 @@ To ważne, bo scenariusz 1 kończy się rootem na węźle. Dlaczego nie VPS: [do
 
 ## Wymagania
 
+Lab działa na dwóch podłożach; wybór ustawia zmienna `TRANSPORT` (domyślnie `lima`):
+
+**macOS (`TRANSPORT=lima`)**
 - macOS 13+ (Apple Silicon lub Intel), około 10 GB wolnego RAM, 60 GB miejsca na dysku
 - `brew install lima kubectl helm` (Lima ≥ 2.0)
 - opcjonalnie `brew install shellcheck` (dla `make lint`)
+
+**Linux (`TRANSPORT=libvirt`)** — patrz [Na Linuksie (libvirt/KVM)](#na-linuksie-libvirtkvm)
+- libvirt + KVM, około 10 GB wolnego RAM, 60 GB miejsca na dysku
+- `sudo apt install libvirt-daemon-system qemu-kvm virtinst qemu-utils kubectl helm`
+- użytkownik w grupie `libvirt`
 
 Wersje k3s i chartów są przypięte w [infra/versions.env](infra/versions.env).
 Przetestowane 2026-11-11: macOS 26.6 (Apple Silicon), Lima 2.2.1, k3s v1.37.2+k3s1 (containerd 2.3.7),
@@ -94,6 +102,39 @@ Przełączanie (`make phase-a`/`phase-b`) dodaje albo usuwa drop-in
 `/etc/rancher/k3s/config.yaml.d/50-forensic-readiness.yaml` i restartuje k3s. Działające pody zostają.
 Falco instaluje się osobno, więc w fazie A trzeba go odinstalować (`make falco-remove`).
 
+## Na Linuksie (libvirt/KVM)
+
+Odpowiednik Limy na Linuksie: `TRANSPORT=libvirt` stawia dwie VM-ki KVM (Ubuntu 24.04)
+przez `virt-install` + cloud-init, w sieci NAT libvirta. Węzły są dostępne po SSH jako
+użytkownik `krycy` dedykowanym kluczem (generowany do `.lab/`, poza gitem).
+
+```bash
+sudo apt install libvirt-daemon-system qemu-kvm virtinst qemu-utils kubectl helm
+sudo usermod -aG libvirt "$USER"    # potem wyloguj/zaloguj
+TRANSPORT=libvirt make up
+export KUBECONFIG=$PWD/.kube/config
+TRANSPORT=libvirt make status
+```
+
+Dalej wszystko jest takie samo (`make phase-b`, `make falco`, `make test`, `make triage`) —
+pamiętaj tylko o `TRANSPORT=libvirt` (albo `export TRANSPORT=libvirt` na czas sesji).
+
+Różnice wobec Limy, wszystkie **po stronie hosta** (skrypty węzła są wspólne):
+
+| | macOS / Lima | Linux / libvirt |
+|---|---|---|
+| Hypervisor | Apple Virtualization.framework (`vmType: vz`) | KVM/QEMU |
+| Stawianie VM | `limactl start` + [node.yaml](infra/lima/node.yaml) | `virt-install` + [cloud-init](infra/libvirt/user-data.yaml.tpl) |
+| Sieć | eth0 (user-v2) + lima1 (vzNAT, tylko host→API) | jedna sieć NAT libvirta (host sięga VM bezpośrednio) |
+| Dostęp do węzła | `limactl shell` | SSH kluczem labu (`krycy@<ip z dzierżawy DHCP>`) |
+| `NODE_IFACE`/`API_IFACE` | `eth0`/`lima1` | puste (adres z trasy domyślnej) |
+
+Parametry (nazwa sieci, puli, obraz) są na górze [infra/libvirt/provision.sh](infra/libvirt/provision.sh)
+i w [infra/versions.env](infra/versions.env). Decyzja projektowa: [docs/decisions.md, D-003](docs/decisions.md).
+
+> **Status:** ścieżka libvirt napisana i sprawdzona składniowo; przebieg `make up`/`make test`
+> na realnym hoście Linux jeszcze do wykonania (patrz D-003).
+
 ## Inny host zamiast Limy
 
 Skrypty węzła ([infra/node/](infra/node/)) nie zależą od Limy. Na hostach z Ubuntu po SSH
@@ -111,6 +152,7 @@ Nazwy węzłów w k3s są równe nazwom VM-ek lub aliasom SSH, bo z nich korzyst
 
 ```
 infra/          K.1: stawianie klastra (lib.sh, up/down/phase.sh), skrypty węzła, konfiguracja fazy B
+                lima/ (VM-ki na macOS), libvirt/ (VM-ki KVM na Linuksie)
 detection/      K.4/K.7/K.8: Falco (values, reguły projektu), Tetragon
 scenarios/      K.2: po jednym katalogu na scenariusz (opis, manifesty, run.sh)
 triage/         X.3: triage.sh (stacja analityka) + node-collect.sh (węzeł)
