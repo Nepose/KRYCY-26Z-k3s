@@ -36,10 +36,28 @@ lab_key_ensure() {
   ssh-keygen -t ed25519 -N "" -C "krycy-lab" -f "$LAB_KEY" >/dev/null
 }
 
+# libvirt_on_wsl2 — czy host to WSL2 (współdzielone jądro Windows).
+libvirt_on_wsl2() { grep -qiE 'microsoft|wsl' /proc/version 2>/dev/null; }
+
+# libvirt_wsl2_check — wymagania wstępne specyficzne dla WSL2. Węzły k3s to pełne VM-ki
+# KVM z własnym jądrem Ubuntu (BTF), więc Falco działa mimo braku BTF w jądrze WSL2 —
+# ale potrzebna jest zagnieżdżona wirtualizacja (/dev/kvm) i systemd jako PID 1 (libvirtd).
+libvirt_wsl2_check() {
+  libvirt_on_wsl2 || return 0
+  log "Host: WSL2 — sprawdzam zagnieżdżoną wirtualizację i systemd"
+  [ -e /dev/kvm ] || die "brak /dev/kvm w WSL2: włącz nested virtualization (Windows 11, wirtualizacja w BIOS/UEFI; w %UserProfile%\\.wslconfig: [wsl2] nestedVirtualization=true), potem 'wsl --shutdown'"
+  [ -r /dev/kvm ] && [ -w /dev/kvm ] || die "brak dostępu do /dev/kvm: dodaj się do grupy kvm (sudo usermod -aG kvm \$USER) i uruchom dystrybucję ponownie"
+  [ "$(ps -p 1 -o comm= 2>/dev/null)" = systemd ] || die "systemd nie jest PID 1 w WSL2 — uruchom: infra/libvirt/wsl2-setup.sh, potem 'wsl --shutdown' w PowerShell"
+  case "$REPO_ROOT" in
+    /mnt/[a-z]/*) warn "repo leży na dysku Windows ($REPO_ROOT): bity wykonywalne i LF bywają gubione, a I/O jest wolne. Zalecane: sklonuj repo w systemie plików WSL2 (np. ~/KRYCY-26Z-k3s)";;
+  esac
+}
+
 # libvirt_preflight — sprawdza narzędzia, sieć i pulę, zanim cokolwiek stworzymy.
 libvirt_preflight() {
+  libvirt_wsl2_check
   need virsh; need virt-install; need qemu-img; need wget; need ssh-keygen
-  _vsh version >/dev/null 2>&1 || die "brak dostępu do $LIBVIRT_URI (czy jesteś w grupie 'libvirt'? wyloguj/zaloguj po dodaniu)"
+  _vsh version >/dev/null 2>&1 || die "brak dostępu do $LIBVIRT_URI (czy jesteś w grupie 'libvirt'? wyloguj/zaloguj po dodaniu; w WSL2: infra/libvirt/wsl2-setup.sh)"
   _vsh net-info "$LIBVIRT_NET" >/dev/null 2>&1 || die "brak sieci libvirt '$LIBVIRT_NET' (utwórz/uruchom: virsh net-start default)"
   [ "$(_vsh net-info "$LIBVIRT_NET" | awk '/Active:/{print $2}')" = yes ] \
     || { log "Uruchamiam sieć $LIBVIRT_NET"; _vsh net-start "$LIBVIRT_NET" >/dev/null; }

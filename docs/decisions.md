@@ -57,5 +57,13 @@ host↔VM, VM↔VM i VM→internet, a `NODE_IFACE`/`API_IFACE` są puste (adres 
 `make up && make test` na realnym hoście Linux z libvirt — do wykonania; wynik i ewentualne
 poprawki (os-variant, opcje `virt-install`, czas pobierania obrazu) dopisać tutaj.
 
+**WSL2 jako host (Windows).** WSL2 nie jest osobnym transportem — jest hostem ścieżki `libvirt`.
+Węzły k3s to pełne VM-ki KVM z własnym jądrem Ubuntu (BTF), więc Falco działa **mimo** że
+współdzielone jądro WSL2 zwykle nie ma `CONFIG_DEBUG_INFO_BTF` (to ten sam problem co w D-001 z LXC,
+tylko rozwiązany zagnieżdżoną wirtualizacją, a nie rezygnacją z telemetrii). Warunki: nested virt
+(`/dev/kvm`) i systemd jako PID 1. Konfiguruje je [wsl2-setup.sh](../infra/libvirt/wsl2-setup.sh),
+a `libvirt_preflight` sprawdza je przed stawianiem VM. Repo musi być w FS WSL2 (nie `/mnt/c`).
+
 **Wniosek do raportu.** Rozdział „host vs węzeł” w architekturze labu opłacił się: dodanie podłoża
 to jeden plik provisionera i trzy gałęzie `case`, bez ruszania detekcji, scenariuszy ani triage.
+WSL2 doszedł jako wyłącznie zestaw wymagań wstępnych, bez zmian w logice stawiania klastra.

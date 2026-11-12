@@ -135,6 +135,36 @@ i w [infra/versions.env](infra/versions.env). Decyzja projektowa: [docs/decision
 > **Status:** ścieżka libvirt napisana i sprawdzona składniowo; przebieg `make up`/`make test`
 > na realnym hoście Linux jeszcze do wykonania (patrz D-003).
 
+### Na Windows przez WSL2
+
+WSL2 jest **hostem** tej samej ścieżki libvirt — nie osobnym transportem. Węzły k3s to pełne
+VM-ki KVM z własnym jądrem Ubuntu 24.04 (BTF), więc **Falco działa**, mimo że współdzielone jądro
+WSL2 zwykle nie ma BTF. Wymaga to zagnieżdżonej wirtualizacji (Windows 11) i systemd w WSL2.
+
+```bash
+# w dystrybucji Ubuntu w WSL2, repo sklonowane w ~/ (NIE na /mnt/c):
+infra/libvirt/wsl2-setup.sh        # pakiety + systemd + grupy + /dev/kvm
+# w PowerShell (Windows):          wsl --shutdown        # restart dystrybucji
+# po ponownym wejściu:
+TRANSPORT=libvirt make up
+export KUBECONFIG=$PWD/.kube/config
+TRANSPORT=libvirt make test
+```
+
+Wymagania specyficzne dla WSL2 (sprawdzane automatycznie przez `make up`):
+
+| Warunek | Jak spełnić |
+|---|---|
+| `/dev/kvm` (nested virt) | Windows 11 + wirtualizacja w BIOS/UEFI; w `%UserProfile%\.wslconfig`: `[wsl2]` + `nestedVirtualization=true` |
+| systemd jako PID 1 | `infra/libvirt/wsl2-setup.sh` wpisuje `systemd=true` do `/etc/wsl.conf`, potem `wsl --shutdown` |
+| grupy `libvirt`, `kvm` | dodaje `wsl2-setup.sh` |
+| repo w FS WSL2 (`~/…`, nie `/mnt/c`) | klon wewnątrz Linuksa: bity wykonywalne, LF i wydajność I/O |
+
+Rozwiązywanie problemów: `systemctl is-system-running`, `ls -l /dev/kvm`, `virsh -c qemu:///system version`.
+Decyzja projektowa: [docs/decisions.md, D-003](docs/decisions.md).
+
+> **Status:** jak przy libvirt — kod i preflight gotowe, pełny przebieg w WSL2 do wykonania.
+
 ## Inny host zamiast Limy
 
 Skrypty węzła ([infra/node/](infra/node/)) nie zależą od Limy. Na hostach z Ubuntu po SSH
